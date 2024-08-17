@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Utilisateur {
+  id             String        @id @default(uuid())
+  mail           String        @unique
+  password       String
+  num_tel        String        @unique
+  adress         String?
+  role           Role
+  id_client      String?       @unique
+  id_cooperative String?       @unique
+  client         Client?       @relation(fields: [id_client], references: [id])
+  cooperative    Cooperative?  @relation(fields: [id_cooperative], references: [id])
+}
+
+model Client {
+  id           String      @id @default(uuid())
+  name         String
+  lastname     String
+  image        String?
+  cin          String      @unique
+  close_num    String      @unique
+  utilisateur  Utilisateur?
+  places       Place[]
+}
+
+model Cooperative {
+  id           String        @id @default(uuid())
+  name         String
+  image        String?
+  utilisateur  Utilisateur?
+  reservations Reservation[]
+  chauffeurs   Chauffeur[]
+  voitures     Voiture[]
+}
+
+model Reservation {
+  id             String      @id @default(uuid())
+  date_reservation DateTime
+  id_cooperative  String
+  cooperative     Cooperative @relation(fields: [id_cooperative], references: [id])
+  voyages         Voyage[]
+}
+
+model Chauffeur {
+  id             String      @id @default(uuid())
+  name           String
+  lastname       String
+  num_tel        String      @unique
+  cin            String      @unique
+  adress         String
+  cooperativeId  String?     
+  cooperative    Cooperative? @relation(fields: [cooperativeId], references: [id])
+  voitures       Voiture[]
+  voiture2       Voiture[]   @relation("Chauffeur2")
+}
+
+model Voiture {
+  id             String      @id @default(uuid())
+  matricule      String      @unique
+  id_chauffeur   String
+  id_chauffeur2  String?
+  status         Boolean     @default(false)
+  chauffeur      Chauffeur   @relation(fields: [id_chauffeur], references: [id])
+  chauffeur2     Chauffeur?  @relation("Chauffeur2", fields: [id_chauffeur2], references: [id])
+  cooperativeId  String?     
+  cooperative    Cooperative? @relation(fields: [cooperativeId], references: [id])
+  voyages        Voyage[]
+}
+
+model Voyage {
+  id             String      @id @default(uuid())
+  start          DateTime
+  arrived        DateTime
+  id_reservation String
+  id_voiture     String?
+  reservation    Reservation @relation(fields: [id_reservation], references: [id])
+  voiture        Voiture?    @relation(fields: [id_voiture], references: [id])
+  places         Place[]
+}
+
+model Place {
+  id             String      @id @default(uuid())
+  num_place      Int
+  status         Status
+  coasts         Int
+  id_client      String?
+  client         Client?     @relation(fields: [id_client], references: [id])
+  voyage         Voyage      @relation(fields: [id_voyage], references: [id])
+  id_voyage      String
+}
+
+enum Role {
+  CLIENT
+  COOPERATIVE
+}
+
+enum Status {
+  LIBRE
+  ATTENTE
+  OCCUPE
+}
