@@ -26,9 +26,15 @@ export const signUp = async (req: Request, res: Response) => {
                         close_num,
                     }
                 } : undefined,
-                cooperative: role === 'COOPERATIVE' ? {
-                    connect: { id: id_cooperative }
-                } : undefined
+                cooperative: role === 'COOPERATIVE' ? (
+                    id_cooperative ? {
+                        connect: { id: id_cooperative }
+                    } : {
+                        create: {
+                            name,
+                        }
+                    }
+                ) : undefined
             },
         });
 

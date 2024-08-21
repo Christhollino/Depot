@@ -3,11 +3,15 @@ import prisma from '../../prismaClient';
 
 // Créer un nouveau chauffeur
 export const createChauffeur = async (req: Request, res: Response) => {
-    const { name, lastname, num_tel, cin, adress } = req.body;
+    const { name, lastname, num_tel, cin, adress, cooperativeId } = req.body;
+
+    if (!cooperativeId) {
+        return res.status(400).json({ message: 'Cooperative ID is required' });
+    }
 
     try {
         const chauffeur = await prisma.chauffeur.create({
-            data: { name, lastname, num_tel, cin, adress },
+            data: { name, lastname, num_tel, cin, adress, cooperativeId },
         });
         res.status(201).json(chauffeur);
     } catch (err) {
@@ -22,6 +26,9 @@ export const getChauffeur = async (req: Request, res: Response) => {
     try {
         const chauffeur = await prisma.chauffeur.findUnique({
             where: { id },
+            include: {
+                cooperative: true,
+            },
         });
 
         if (!chauffeur) {
@@ -37,7 +44,11 @@ export const getChauffeur = async (req: Request, res: Response) => {
 // Lire tous les chauffeurs
 export const getAllChauffeurs = async (req: Request, res: Response) => {
     try {
-        const chauffeurs = await prisma.chauffeur.findMany();
+        const chauffeurs = await prisma.chauffeur.findMany({
+            include: {
+                cooperative: true,
+            },
+        });
         res.json(chauffeurs);
     } catch (err) {
         res.status(500).json({ message: 'Error retrieving chauffeurs', error: (err as Error).message });
@@ -47,12 +58,16 @@ export const getAllChauffeurs = async (req: Request, res: Response) => {
 // Mettre à jour un chauffeur
 export const updateChauffeur = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { name, lastname, num_tel, cin, adress } = req.body;
+    const { name, lastname, num_tel, cin, adress, cooperativeId } = req.body;
+
+    if (!cooperativeId) {
+        return res.status(400).json({ message: 'Cooperative ID is required' });
+    }
 
     try {
         const updatedChauffeur = await prisma.chauffeur.update({
             where: { id },
-            data: { name, lastname, num_tel, cin, adress },
+            data: { name, lastname, num_tel, cin, adress, cooperativeId },
         });
 
         res.json(updatedChauffeur);

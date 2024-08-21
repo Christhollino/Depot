@@ -5,7 +5,7 @@ import clientRoutes from "./routes/client/clientRoutes"
 import chauffeurRoutes from "./routes/cooperative/chauffeurRoutes"
 import voitureRoutes from "./routes/cooperative/voitureRoutes"
 import reservationRoutes from "./routes/cooperative/reservationRoutes"
-import voyageRoutes from "./routes/cooperative/voitureRoutes"
+import voyageRoutes from "./routes/cooperative/voyageRoutes"
 
 
 

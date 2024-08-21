@@ -2,6 +2,15 @@ import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import prisma from '../prismaClient';
 
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: JwtPayload & { id: string; role: string };
+    }
+  }
+}
+
 interface DecodedToken extends JwtPayload {
     id: string;
     role: string;

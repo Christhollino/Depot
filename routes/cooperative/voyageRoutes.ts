@@ -3,8 +3,8 @@ import { createVoyage, getVoyages, deleteVoyage } from '../../controllers/cooper
 
 const router = Router();
 
-router.post('/voyages', createVoyage);
-router.get('/voyages', getVoyages);
+router.post('/create', createVoyage);
+router.get('/', getVoyages);
 router.delete('/voyages/:id', deleteVoyage);
 
 export default router;

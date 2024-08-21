@@ -10,10 +10,10 @@ import {
 
 const router = express.Router();
 
-router.post('/', authenticateJWT, createChauffeur);
+router.post('/create', authenticateJWT, createChauffeur);
 router.get('/:id', authenticateJWT, getChauffeur);
 router.get('/', authenticateJWT, getAllChauffeurs);
-router.put('/:id', authenticateJWT, updateChauffeur);
-router.delete('/:id', authenticateJWT, deleteChauffeur);
+router.put('/update/:id', authenticateJWT, updateChauffeur);
+router.delete('/delet/:id', authenticateJWT, deleteChauffeur);
 
 export default router;

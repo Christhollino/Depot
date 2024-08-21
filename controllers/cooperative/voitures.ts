@@ -3,32 +3,36 @@ import prisma from '../../prismaClient';
 
 // Créer une nouvelle voiture
 export const createVoiture = async (req: Request, res: Response) => {
-    const { matricule, id_chauffeur, id_chauffeur2, status } = req.body;
+    const { matricule, id_chauffeur, id_chauffeur2, cooperativeId } = req.body;
+
+    if (!cooperativeId) {
+        return res.status(400).json({ message: 'Cooperative ID is required' });
+    }
 
     try {
-        // Vérifier si les chauffeurs ne sont pas déjà assignés à une autre voiture
         const chauffeur1 = await prisma.chauffeur.findUnique({
-            where: { id: req.params.id },
-            include: {
-                voitures: true,
-            },
+            where: { id: id_chauffeur },
+            include: { voitures: true },
         });
 
         const chauffeur2 = id_chauffeur2 ? await prisma.chauffeur.findUnique({
             where: { id: id_chauffeur2 },
             include: { voitures: true },
         }) : null;
+        console.log(chauffeur1)
 
-        if (chauffeur1?.voitures || (chauffeur2 && chauffeur2.voitures)) {
+        if ((chauffeur1 && chauffeur1.voitures.length > 0) || (chauffeur2 && chauffeur2.voitures.length > 0)) {
             return res.status(400).json({ message: 'One or both chauffeurs are already assigned to another vehicle' });
         }
+        
+        
 
         const voiture = await prisma.voiture.create({
             data: {
                 matricule,
                 id_chauffeur,
                 id_chauffeur2,
-                status,
+                cooperativeId,
             },
         });
 
@@ -45,7 +49,7 @@ export const getVoiture = async (req: Request, res: Response) => {
     try {
         const voiture = await prisma.voiture.findUnique({
             where: { id },
-            include: { chauffeur: true, chauffeur2: true },
+            include: { chauffeur: true, chauffeur2: true, cooperative: true },
         });
 
         if (!voiture) {
@@ -62,7 +66,7 @@ export const getVoiture = async (req: Request, res: Response) => {
 export const getAllVoitures = async (req: Request, res: Response) => {
     try {
         const voitures = await prisma.voiture.findMany({
-            include: { chauffeur: true, chauffeur2: true },
+            include: { chauffeur: true, chauffeur2: true, cooperative: true },
         });
 
         res.json(voitures);
@@ -74,7 +78,11 @@ export const getAllVoitures = async (req: Request, res: Response) => {
 // Mettre à jour une voiture
 export const updateVoiture = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { matricule, id_chauffeur, id_chauffeur2, status } = req.body;
+    const { matricule, id_chauffeur, id_chauffeur2, status, cooperativeId } = req.body;
+
+    if (!cooperativeId) {
+        return res.status(400).json({ message: 'Cooperative ID is required' });
+    }
 
     try {
         const updatedVoiture = await prisma.voiture.update({
@@ -84,6 +92,7 @@ export const updateVoiture = async (req: Request, res: Response) => {
                 id_chauffeur,
                 id_chauffeur2,
                 status,
+                cooperativeId,
             },
         });
 

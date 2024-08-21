@@ -5,5 +5,3 @@ declare module 'express-serve-static-core' {
         user?: JwtPayload & { id: string; role: string };
     }
 }
-
-

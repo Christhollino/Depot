@@ -4,7 +4,7 @@ import { createReservation, updateReservation } from '../../controllers/cooperat
 const router = Router();
 
 // Routes pour les réservations
-router.post('/reservations', createReservation);
-router.put('/reservations/:id', updateReservation);
+router.post('/create', createReservation);
+router.put('/update/:id', updateReservation);
 
 export default router;
