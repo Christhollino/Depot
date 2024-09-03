@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '../../prismaClient';
+import { authenticateJWT } from '../../middlewares/authMiddleware';
 
 // Créer un nouveau chauffeur
 export const createChauffeur = async (req: Request, res: Response) => {

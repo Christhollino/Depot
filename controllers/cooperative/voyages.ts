@@ -38,16 +38,20 @@ export const getVoyages = async (req: Request, res: Response) => {
     try {
         const voyages = await prisma.voyage.findMany({
             include: {
-                reservation: true,
-                places: true,
+                reservation: {
+                    include: {
+                        cooperative: true,
+                    },
+                },
             },
         });
 
         res.status(200).json(voyages);
-    } catch (err : any) {
+    } catch (err: any) {
         res.status(400).json({ message: 'Error fetching voyages', error: err.message });
     }
 };
+
 
 // Suppression d'un voyage
 export const deleteVoyage = async (req: Request, res: Response) => {
