@@ -40,6 +40,9 @@ model Client {
 model Cooperative {
   id           String        @id @default(uuid())
   name         String
+  centre       String
+  nif          String
+  stat         String
   image        String?
   utilisateur  Utilisateur?
   reservations Reservation[]

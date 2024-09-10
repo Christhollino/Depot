@@ -36,13 +36,23 @@ export const createVoyage = async (req: Request, res: Response) => {
 // Lecture des voyages
 export const getVoyages = async (req: Request, res: Response) => {
     try {
+        const { dateDepart } = req.query;
+        const date = dateDepart ? new Date(dateDepart as string) : new Date();
+
         const voyages = await prisma.voyage.findMany({
+            where: {
+                start: {
+                    gte: date,
+                },
+            },
             include: {
                 reservation: {
                     include: {
                         cooperative: true,
                     },
                 },
+                voiture: true,
+                places: true,
             },
         });
 
