@@ -5,6 +5,6 @@ const router = Router();
 
 router.post('/create', createVoyage);
 router.get('/', getVoyages);
-router.delete('/voyages/:id', deleteVoyage);
+router.delete('/delet/:id', deleteVoyage);
 
 export default router;

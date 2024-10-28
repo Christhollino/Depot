@@ -7,7 +7,7 @@ import { authenticateJWT } from '../middlewares/authMiddleware';
 
 // Inscription d'un utilisateur
 export const signUp = async (req: Request, res: Response) => {
-    const { mail, password, role, name, lastname, cin, num_tel, close_num, id_cooperative } = req.body;
+    const { mail, password, role, name, lastname, cin, num_tel, close_num, id_cooperative, nif, stat, centre } = req.body;
 
     if (!password) {
         return res.status(400).json({ message: 'Password is required' });
@@ -26,7 +26,7 @@ export const signUp = async (req: Request, res: Response) => {
                         name,
                         lastname,
                         cin,
-                        close_num,
+                        close_num
                     }
                 } : undefined,
                 cooperative: role === 'COOPERATIVE' ? (
@@ -35,6 +35,9 @@ export const signUp = async (req: Request, res: Response) => {
                     } : {
                         create: {
                             name,
+                            nif,
+                            stat,
+                            centre
                         }
                     }
                 ) : undefined
@@ -62,7 +65,7 @@ export const login = async (req: Request, res: Response) => {
     if (user && bcrypt.compareSync(password, user.password)) {
         console.log(process.env.JWT_SECRET as string);
         const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-        res.json({ token });
+        res.json({ token, role: user.role });
     } else {
         res.status(401).json({ message: 'Invalid credentials' });
     }
